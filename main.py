@@ -4,7 +4,8 @@ from glob import glob
 from matplotlib import pyplot as plt
 
 EXAMPLE=""
-ROI=[(100,400), (200,500)]
+
+Y0, X0, Y1, X1 = 100, 400, 400, 700
 SIZE=8
 e=2.78
 
@@ -20,9 +21,7 @@ def compare(img1, img2):
             D += [(a-b)**2]
     return sum(D)**1/2
 
-def imf(frame, example=EXAMPLE):#функция сравнения кадра из видео с эталоном
-    imageExample = cv2.imread(example, 0)#
-    
+def imf(frame: 'np.array', imageExample: 'np.array') -> float:#функция сравнения кадра из видео с эталоном
     avg=imageExample.mean()#функция mean ищет среднее арифметическое масива изображения 
     avg1=frame.mean()
     # print(avg, avg1)
@@ -44,14 +43,14 @@ def imf(frame, example=EXAMPLE):#функция сравнения кадра и
 
     #print(imf("/home/sophia/Изображения/IMG-1544.jpg"))#кадры из видео
 
-def get_roi(img, roi): # Фнукция для вывода определенной части изображения
+def get_roi(img): # Фнукция для вывода определенной части изображения
     
     # img = cv2.imread(path, 0) 
     # print(img.shape)
-    return img[roi[0][0]:roi[0][1], roi[1][0]:roi[1][1]]
+    return img[Y0:Y1, X0:X1]
 
-def get_painted_roi_on_frame(img, roi):
-    cv2.rectangle(img, (roi[0][0], roi[1][0]), (roi[0][1], roi[1][1]), (255,255,255), 4)
+def get_painted_roi_on_frame(img):
+    cv2.rectangle(img, (X0,Y0), (X1, Y1), (255,255,255), 4)
 
     return img
 
@@ -60,7 +59,7 @@ if __name__ == "__main__": #Если запустить файл, то код б
 
     
     #1 - путь, а второе значение координат области изображения  
-    
+    exxs = [cv2.imread(exx, 0) for exx in glob('/Users/sanya/Work/test_img_cmp_proj_kvant/222/*.jpeg')]
     cap = cv2.VideoCapture(0)
     while cap.isOpened():
         ret, fframe = cap.read()
@@ -68,20 +67,19 @@ if __name__ == "__main__": #Если запустить файл, то код б
         img = np.flip(img, axis=1)
         img = img.copy() # error in opencv shell
         #print(img.shape)
-        loli = get_roi(img, ROI)
-        # painted_img = get_painted_roi_on_frame(img, ROI)
-        cv2.rectangle(img, (ROI[0][1], ROI[1][1]), (ROI[0][0], ROI[1][0]), (255,255,255), 4)
-        img = img.copy()
+        loli = get_roi(img)
+        get_painted_roi_on_frame(img)
+        # img = img.copy()
         #print(img.shape)
         # loli = cv2.imread('/Users/sanya/Work/test_img_cmp_proj_kvant/222/photo_1.jpeg', 0)#
         c = []
         c_val = []
-        for ex in glob('/Users/sanya/Work/test_img_cmp_proj_kvant/222/*.jpeg'):
-            c += [imf(loli, example=ex)]
+        for ex in exxs:
+            c += [imf(loli, ex)]
             # c_val += [(imf(loli, example=ex), ex.split('/')[-1])]
             # print(c)
         min_c = min(c)
-        print(min_c)
+        print([ round(x,2) for x in c ])
 
         cv2.imshow('output', img)
 
