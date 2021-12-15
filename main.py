@@ -59,7 +59,9 @@ if __name__ == "__main__": #Если запустить файл, то код б
 
     
     #1 - путь, а второе значение координат области изображения  
-    exxs = [cv2.imread(exx, 0) for exx in glob('/Users/sanya/Work/test_img_cmp_proj_kvant/222/*.jpeg')]
+    files = glob('/Users/sanya/Work/test_img_cmp_proj_kvant/333/*.png')
+    print(files)
+    exxs = [cv2.imread(exx, 0) for exx in files]
     cap = cv2.VideoCapture(0)
     while cap.isOpened():
         ret, fframe = cap.read()
@@ -76,10 +78,14 @@ if __name__ == "__main__": #Если запустить файл, то код б
         c_val = []
         for ex in exxs:
             c += [imf(loli, ex)]
-            # c_val += [(imf(loli, example=ex), ex.split('/')[-1])]
             # print(c)
         min_c = min(c)
-        print([ round(x,2) for x in c ])
+        try:
+            if min_c < 0.2:
+                print((min_c, files[c.index(min_c)].split('/')[-1]))
+        except ValueError:
+            pass
+        # print([ round(x,2) for x in c ])
 
         cv2.imshow('output', img)
 
