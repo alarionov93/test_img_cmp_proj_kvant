@@ -59,7 +59,7 @@ if __name__ == "__main__": #Если запустить файл, то код б
 
     
     #1 - путь, а второе значение координат области изображения  
-    files = glob('/Users/sanya/Work/test_img_cmp_proj_kvant/333/*.png')
+    files = glob('examples/img/*.png')
     print(files)
     exxs = [cv2.imread(exx, 0) for exx in files]
     cap = cv2.VideoCapture(0)
