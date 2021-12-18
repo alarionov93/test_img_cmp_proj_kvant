@@ -1,6 +1,8 @@
+import requests
 import numpy as np
 import cv2 as cv2
 from glob import glob
+from time import sleep
 from matplotlib import pyplot as plt
 
 EXAMPLE=""
@@ -57,7 +59,8 @@ def get_painted_roi_on_frame(img):
 
 if __name__ == "__main__": #Если запустить файл, то код будет читаться отсюда
 
-    
+    last_cmd = ''
+    cmd = ''    
     #1 - путь, а второе значение координат области изображения  
     files = glob('examples/img/*.png')
     print(files)
@@ -82,7 +85,13 @@ if __name__ == "__main__": #Если запустить файл, то код б
         min_c = min(c)
         try:
             if min_c < 0.2:
-                print((min_c, files[c.index(min_c)].split('/')[-1]))
+                # print((min_c, files[c.index(min_c)].split('/')[-1]))
+                cmd = files[c.index(min_c)].split('/')[-1].split('.')[0][:-1]
+                if cmd != last_cmd:
+                    requests.get('http://192.168.10.175:8000/input?cmd=%s' % cmd)
+                    print((min_c, files[c.index(min_c)].split('/')[-1]))
+                last_cmd = cmd
+                # sleep(1)
         except ValueError:
             pass
         # print([ round(x,2) for x in c ])
